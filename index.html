@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ramen Programmer — IT Solutions</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cyan: #00f5ff;
+    --magenta: #ff00cc;
+    --yellow: #ffe234;
+    --bg: #050510;
+    --card-bg: rgba(0,245,255,0.04);
+    --glow-cyan: 0 0 20px #00f5ff88, 0 0 60px #00f5ff33;
+    --glow-mag: 0 0 20px #ff00cc88, 0 0 60px #ff00cc33;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: #e0f7ff;
+    font-family: 'Space Mono', monospace;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,245,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,245,255,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 3rem;
+    background: rgba(5,5,16,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0,245,255,0.15);
+  }
+
+  .nav-logo {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 1.1rem;
+    letter-spacing: 0.15em;
+    color: var(--cyan);
+    text-shadow: var(--glow-cyan);
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(224,247,255,0.6);
+    text-decoration: none;
+    transition: color 0.2s, text-shadow 0.2s;
+  }
+  .nav-links a:hover {
+    color: var(--cyan);
+    text-shadow: var(--glow-cyan);
+  }
+
+  .nav-cta {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.6rem 1.4rem;
+    border: 1px solid var(--cyan);
+    color: var(--cyan);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+  .nav-cta:hover {
+    background: var(--cyan);
+    color: var(--bg);
+    box-shadow: var(--glow-cyan);
+  }
+
+  .hero {
+    position: relative;
+    z-index: 1;
+    min-height: 82vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7rem 3rem 2rem;
+    overflow: hidden;
+  }
+
+  .hero-glow-1 {
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,245,255,0.12) 0%, transparent 70%);
+    top: -100px; left: -200px;
+    animation: drift 8s ease-in-out infinite alternate;
+  }
+  .hero-glow-2 {
+    position: absolute;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,0,204,0.1) 0%, transparent 70%);
+    bottom: -50px; right: -150px;
+    animation: drift 10s ease-in-out infinite alternate-reverse;
+  }
+
+  @keyframes drift {
+    from { transform: translate(0,0) scale(1); }
+    to { transform: translate(40px, 30px) scale(1.1); }
+  }
+
+  .hero-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 4rem;
+    max-width: 1200px;
+    width: 100%;
+  }
+
+  .hero-text { animation: fadeUp 0.8s ease both; }
+  .hero-img  { animation: fadeUp 0.8s 0.2s ease both; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--magenta);
+    border: 1px solid var(--magenta);
+    padding: 0.3rem 0.8rem;
+    margin-bottom: 1.5rem;
+    animation: blink 3s step-end infinite;
+  }
+  @keyframes blink {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+  }
+
+  h1 .line1 { color: var(--cyan); text-shadow: var(--glow-cyan); }
+  h1 .line2 { color: #ffffff; }
+
+  .hero-sub {
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: rgba(224,247,255,0.6);
+    max-width: 500px;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-sub code {
+    color: var(--yellow);
+    background: rgba(255,226,52,0.1);
+    padding: 0.1em 0.4em;
+    border-radius: 3px;
+  }
+
+  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+  .btn-primary {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.9rem 2rem;
+    background: var(--cyan);
+    color: var(--bg);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-primary:hover {
+    box-shadow: var(--glow-cyan);
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.9rem 2rem;
+    background: transparent;
+    color: var(--magenta);
+    border: 1px solid var(--magenta);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-secondary:hover {
+    background: var(--magenta);
+    color: var(--bg);
+    box-shadow: var(--glow-mag);
+    transform: translateY(-2px);
+  }
+
+  .logo-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+
+  .logo-wrapper img {
+    width: 100%;
+    max-width: 480px;
+    filter: drop-shadow(0 0 40px rgba(0,245,255,0.5)) drop-shadow(0 0 80px rgba(255,0,204,0.3));
+    animation: floatLogo 4s ease-in-out infinite;
+  }
+
+  @keyframes floatLogo {
+    0%, 100% { transform: translateY(0) rotate(-1deg); }
+    50%       { transform: translateY(-18px) rotate(1deg); }
+  }
+
+  .logo-ring {
+    position: absolute;
+    width: 420px; height: 420px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,245,255,0.2);
+    animation: spin 20s linear infinite;
+  }
+  .logo-ring::before {
+    content: '';
+    position: absolute;
+    width: 10px; height: 10px;
+    background: var(--cyan);
+    border-radius: 50%;
+    top: -5px; left: 50%;
+    box-shadow: var(--glow-cyan);
+  }
+  .logo-ring-2 {
+    position: absolute;
+    width: 360px; height: 360px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,0,204,0.15);
+    animation: spin 14s linear infinite reverse;
+  }
+  .logo-ring-2::before {
+    content: '';
+    position: absolute;
+    width: 8px; height: 8px;
+    background: var(--magenta);
+    border-radius: 50%;
+    bottom: -4px; left: 50%;
+    box-shadow: var(--glow-mag);
+  }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  .ticker-wrap {
+    position: relative; z-index: 1;
+    border-top: 1px solid rgba(0,245,255,0.2);
+    border-bottom: 1px solid rgba(0,245,255,0.2);
+    background: rgba(0,245,255,0.03);
+    padding: 0.8rem 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .ticker {
+    display: inline-block;
+    animation: ticker 25s linear infinite;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--cyan);
+  }
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  .ticker-sep { margin: 0 2rem; color: var(--magenta); }
+
+  section {
+    position: relative; z-index: 1;
+    padding: 3.5rem 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--magenta);
+    margin-bottom: 1rem;
+  }
+
+  h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.8rem, 3vw, 2.8rem);
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 1rem;
+  }
+
+  h2 span { color: var(--cyan); text-shadow: var(--glow-cyan); }
+
+  .section-sub {
+    font-size: 0.875rem;
+    line-height: 1.8;
+    color: rgba(224,247,255,0.55);
+    max-width: 560px;
+    margin-bottom: 2rem;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5px;
+    background: rgba(0,245,255,0.1);
+  }
+
+  .feature-card {
+    background: var(--bg);
+    padding: 2.5rem;
+    border: 1px solid rgba(0,245,255,0.08);
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--cyan), var(--magenta));
+    transform: scaleX(0);
+    transition: transform 0.3s;
+    transform-origin: left;
+  }
+  .feature-card:hover::before { transform: scaleX(1); }
+  .feature-card:hover { background: rgba(0,245,255,0.04); }
+
+  .feature-icon {
+    font-size: 2rem;
+    margin-bottom: 1.2rem;
+    display: block;
+  }
+  .feature-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--cyan);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.8rem;
+  }
+  .feature-desc {
+    font-size: 0.8rem;
+    line-height: 1.7;
+    color: rgba(224,247,255,0.5);
+  }
+
+  .code-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .code-block {
+    background: rgba(0,0,0,0.6);
+    border: 1px solid rgba(0,245,255,0.15);
+    padding: 2rem;
+    font-size: 0.78rem;
+    line-height: 1.9;
+    position: relative;
+    overflow: hidden;
+  }
+  .code-block::before {
+    content: '// ramen.config.ts';
+    display: block;
+    color: rgba(255,255,255,0.2);
+    font-size: 0.7rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(0,245,255,0.1);
+    padding-bottom: 0.8rem;
+  }
+  .code-block .kw  { color: var(--magenta); }
+  .code-block .fn  { color: var(--cyan); }
+  .code-block .str { color: var(--yellow); }
+  .code-block .cmt { color: rgba(255,255,255,0.25); font-style: italic; }
+  .code-block .num { color: #a8ff78; }
+
+  .typing-cursor {
+    display: inline-block;
+    width: 8px; height: 1em;
+    background: var(--cyan);
+    animation: blink 1s step-end infinite;
+    vertical-align: text-bottom;
+  }
+
+  /* Services cards (renamed from menu) */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .service-card {
+    border: 1px solid rgba(0,245,255,0.1);
+    padding: 2rem;
+    position: relative;
+    transition: all 0.3s;
+    background: var(--card-bg);
+  }
+  .service-card:hover {
+    border-color: var(--cyan);
+    box-shadow: inset 0 0 30px rgba(0,245,255,0.05), var(--glow-cyan);
+    transform: translateY(-4px);
+  }
+
+  .service-num {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3rem;
+    font-weight: 900;
+    color: rgba(0,245,255,0.08);
+    position: absolute;
+    top: 1rem; right: 1.5rem;
+    line-height: 1;
+  }
+
+  .service-tag {
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--magenta);
+    margin-bottom: 0.8rem;
+  }
+
+  .service-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.6rem;
+  }
+
+  .service-desc {
+    font-size: 0.75rem;
+    line-height: 1.7;
+    color: rgba(224,247,255,0.45);
+    margin-bottom: 1.2rem;
+  }
+
+  .service-tech {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--yellow);
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: rgba(0,245,255,0.1);
+    border: 1px solid rgba(0,245,255,0.1);
+    margin-bottom: 3rem;
+  }
+
+  .stat-item {
+    background: var(--bg);
+    padding: 2.5rem 2rem;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--cyan);
+    text-shadow: var(--glow-cyan);
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+
+  .stat-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(224,247,255,0.4);
+  }
+
+  footer {
+    position: relative; z-index: 1;
+    border-top: 1px solid rgba(0,245,255,0.1);
+    padding: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 100%;
+  }
+
+  .footer-brand {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 1rem;
+    color: var(--cyan);
+    text-shadow: var(--glow-cyan);
+  }
+
+  .footer-copy {
+    font-size: 0.7rem;
+    color: rgba(224,247,255,0.3);
+    letter-spacing: 0.1em;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 2rem;
+  }
+  .footer-links a {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(224,247,255,0.35);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--cyan); }
+
+  .divider {
+    position: relative; z-index: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,245,255,0.3), rgba(255,0,204,0.3), transparent);
+    margin: 0 3rem;
+  }
+
+  /* Decorative orbit rings for sections */
+  .orbit-deco {
+    position: absolute;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .orbit-deco .ring {
+    border-radius: 50%;
+    border: 1px solid rgba(0,245,255,0.12);
+    animation: spin 22s linear infinite;
+    position: absolute;
+  }
+  .orbit-deco .ring::before {
+    content: '';
+    position: absolute;
+    width: 8px; height: 8px;
+    background: var(--cyan);
+    border-radius: 50%;
+    top: -4px; left: 50%;
+    box-shadow: var(--glow-cyan);
+  }
+  .orbit-deco .ring2 {
+    border-radius: 50%;
+    border: 1px solid rgba(255,0,204,0.1);
+    animation: spin 15s linear infinite reverse;
+    position: absolute;
+  }
+  .orbit-deco .ring2::before {
+    content: '';
+    position: absolute;
+    width: 6px; height: 6px;
+    background: var(--magenta);
+    border-radius: 50%;
+    bottom: -3px; left: 50%;
+    box-shadow: var(--glow-mag);
+  }
+  .orbit-deco .logo-orb {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,245,255,0.06) 0%, transparent 70%);
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">RAMEN PROGRAMMER</a>
+  <div style="display:flex; align-items:center; gap:2.5rem;">
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#stack">Our Stack</a></li>
+    </ul>
+    <a href="/cdn-cgi/l/email-protection#f199949d9d9e83909c949f81839e9683909c9c9483b1969c90989ddf929e9c" class="nav-cta">Let's Cook</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow-1"></div>
+  <div class="hero-glow-2"></div>
+  <div class="hero-inner">
+    <div class="hero-text">
+      <span class="hero-badge">// Accepting New Clients — v2.0.26</span>
+      <h1>
+        <span class="line1">RAMEN</span><br>
+        <span class="line2">PROGRAMMER</span>
+      </h1>
+      <p class="hero-sub">
+        We help companies get their <code>cloud &amp; infra</code> under control:
+        we take your overpriced, undercooked AWS/GCP disaster and turn it into
+        something that actually runs smoothly. No burned budgets, no soggy deployments.
+        Just clean, hot infrastructure — served right.
+      </p>
+
+    </div>
+    <div class="hero-img">
+      <div class="logo-wrapper">
+        <div class="logo-ring"></div>
+        <div class="logo-ring-2"></div>
+        <img src="logo.png" alt="Ramen Programmer Logo">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <span class="ticker">
+    🍜 RAMEN PROGRAMMER <span class="ticker-sep">✦</span>
+    WE SHIP HOT CODE <span class="ticker-sep">✦</span>
+    FULL STACK. FULL FLAVOR. <span class="ticker-sep">✦</span>
+    NO HALF-COOKED SOLUTIONS <span class="ticker-sep">✦</span>
+    ALWAYS IN PRODUCTION <span class="ticker-sep">✦</span>
+    FUELED BY CAFFEINE <span class="ticker-sep">✦</span>
+    RAMEN PROGRAMMER <span class="ticker-sep">✦</span>
+    WE SHIP HOT CODE <span class="ticker-sep">✦</span>
+    FULL STACK. FULL FLAVOR. <span class="ticker-sep">✦</span>
+    NO HALF-COOKED SOLUTIONS <span class="ticker-sep">✦</span>
+    ALWAYS IN PRODUCTION <span class="ticker-sep">✦</span>
+    FUELED BY CAFFEINE <span class="ticker-sep">✦</span>
+  </span>
+</div>
+
+<!-- STATS -->
+<section style="position:relative; overflow:hidden;">
+  <div class="orbit-deco" style="right:-180px; top:20%; transform:translateY(-50%); width:340px; height:340px;">
+    <div class="logo-orb"></div>
+    <div class="ring" style="width:340px;height:340px;top:0;left:0;"></div>
+    <div class="ring2" style="width:280px;height:280px;top:30px;left:30px;"></div>
+  </div>
+  <div class="stats-row reveal">
+    <div class="stat-item">
+      <span class="stat-num">50+</span>
+      <span class="stat-label">Projects Shipped</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">4AM</span>
+      <span class="stat-label">We're Still Online</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">99.9%</span>
+      <span class="stat-label">Uptime Guaranteed</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">0</span>
+      <span class="stat-label">Unresolved P0s</span>
+    </div>
+  </div>
+
+  <!-- ABOUT / FEATURES -->
+  <div id="about" style="scroll-margin-top: 320px;">
+    <div class="section-label">// core_values</div>
+    <h2>Built Different. <span>Deployed Hotter.</span></h2>
+    <p class="section-sub">Every service comes seasoned with AI-assisted observability, automated detection, and intelligent orchestration — platforms that learn, self-tune, and scale with your business. We start every engagement by tasting your infrastructure: a deep cost and architecture assessment to find the quick wins and the slow burns. Then we get cooking. <code>Let's build something together.</code></p>
+  </div>
+  <div class="features-grid reveal">
+    <div class="feature-card">
+      <span class="feature-icon">⚡</span>
+      <div class="feature-title">Hot Deployment</div>
+      <p class="feature-desc">We don't let code sit in staging forever. Continuous delivery means your product is always moving forward, not collecting dust in a PR queue.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🧬</span>
+      <div class="feature-title">Async by Default</div>
+      <p class="feature-desc">Our teams run non-blocking. No bottlenecks, no single points of failure. Architecture designed so nothing — and no one — ever deadlocks.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🛡️</span>
+      <div class="feature-title">Type-Safe Thinking</div>
+      <p class="feature-desc">We think before we type. Strict contracts, clear interfaces, and a refusal to ship ambiguous code. Every handoff compiles clean.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🌐</span>
+      <div class="feature-title">Edge-Ready Infra</div>
+      <p class="feature-desc">Cloud-native from day one. We build infrastructure that scales horizontally, survives traffic spikes, and costs you less at 3AM on a Sunday.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🔁</span>
+      <div class="feature-title">CI/CD Everything</div>
+      <p class="feature-desc">Every project comes with automated pipelines, test coverage, and rollback strategies. If it can break in prod, we've already broken it in staging.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🧠</span>
+      <div class="feature-title">AI-Augmented Dev</div>
+      <p class="feature-desc">We integrate AI where it actually matters — not as a buzzword, but as a multiplier. Smarter tooling, faster iteration, better outcomes for your users.</p>
+    </div>
+  </div>
+</section>
+
+<!-- STACK / CODE SECTION -->
+<section id="stack" style="position:relative; overflow:hidden; scroll-margin-top: 320px;">
+  <div class="orbit-deco" style="left:-160px; top:20%; transform:translateY(-50%); width:300px; height:300px;">
+    <div class="logo-orb"></div>
+    <div class="ring" style="width:300px;height:300px;top:0;left:0;"></div>
+    <div class="ring2" style="width:240px;height:240px;top:30px;left:30px;"></div>
+  </div>
+  <div class="section-label">// our_stack</div>
+  <h2>The <span>Full Stack</span> Offering</h2>
+  <p class="section-sub">Think of this as our menu — except everything's made from scratch, nothing comes frozen, and we don't do substitutions unless it's the right call. Each service is a course: from infrastructure as the broth base, all the way to AI as the secret seasoning on top.</p>
+  <div style="display:flex; gap:1.5rem; margin-bottom:2.5rem; flex-wrap:wrap;">
+    <a href="https://github.com/RamenProgrammer" target="_blank" class="btn-secondary" style="font-size:0.7rem; padding:0.6rem 1.2rem;">⌥ GitHub</a>
+    <a href="https://ramenprogramming.com" target="_blank" class="btn-secondary" style="font-size:0.7rem; padding:0.6rem 1.2rem;">🌐 ramenprogramming.com</a>
+  </div>
+  <div class="services-grid reveal">
+    <div class="service-card">
+      <div class="service-num">01</div>
+      <div class="service-tag">// Core Product</div>
+      <div class="service-name">FULL STACK DEV</div>
+      <p class="service-desc">Front to back, database to deployment. We build complete web and mobile products from scratch — no hand-offs, no finger-pointing, just working software.</p>
+      <span class="service-tech">React · Node · PostgreSQL</span>
+    </div>
+    <div class="service-card">
+      <div class="service-num">02</div>
+      <div class="service-tag">// Infrastructure</div>
+      <div class="service-name">CLOUD &amp; DEVOPS</div>
+      <p class="service-desc">AWS, GCP, or Azure — we design infrastructure that scales with you. CI/CD pipelines, containerization, monitoring. Your ops, finally under control.</p>
+      <span class="service-tech">Docker · K8s · Terraform</span>
+    </div>
+    <div class="service-card">
+      <div class="service-num">03</div>
+      <div class="service-tag">// Intelligence Layer</div>
+      <div class="service-name">AI INTEGRATION</div>
+      <p class="service-desc">LLMs, embeddings, RAG pipelines — we wire AI into your existing product without burning it down. Practical intelligence, not demo-ware.</p>
+      <span class="service-tech">OpenAI · LangChain · Pinecone</span>
+    </div>
+    <div class="service-card">
+      <div class="service-num">04</div>
+      <div class="service-tag">// Emergency Ward</div>
+      <div class="service-name">LEGACY RESCUE</div>
+      <p class="service-desc">Got a system that everyone's afraid to touch? We untangle spaghetti code, migrate crumbling databases, and make the undocumented finally make sense.</p>
+      <span class="service-tech">Audit · Refactor · Migrate</span>
+    </div>
+    <div class="service-card">
+      <div class="service-num">05</div>
+      <div class="service-tag">// On Demand</div>
+      <div class="service-name">TECH CONSULTING</div>
+      <p class="service-desc">Architecture reviews, stack decisions, hiring pipelines, technical due diligence. We help you make the right calls before they get expensive to undo.</p>
+      <span class="service-tech">Strategy · Audit · Roadmap</span>
+    </div>
+    <div class="service-card">
+      <div class="service-num">06</div>
+      <div class="service-tag">// Always On</div>
+      <div class="service-name">SUPPORT &amp; RETAINER</div>
+      <p class="service-desc">Embedded engineers on-call. We become an extension of your team — shipping features, squashing bugs, and keeping the lights on month after month.</p>
+      <span class="service-tech">SLA · On-Call · Sprints</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="contact">
+  <div class="footer-brand">RAMEN PROGRAMMER</div>
+  <div class="footer-copy">© 2025 Ramen Programmer. All rights reserved.</div>
+  <div class="footer-links">
+    <a href="https://github.com/RamenProgrammer" target="_blank">GitHub</a>
+    <a href="mailto:helloramenprogrammer@gmail.com">Contact</a>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e
